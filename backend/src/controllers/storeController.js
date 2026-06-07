@@ -1,5 +1,24 @@
 const { Store, Rating } = require("../models");
 const { Op, fn, col } = require("sequelize");
+const getAllStores = async (req, res) => {
+  try {
+
+    const sort = req.query.sort;
+
+    const stores = await Store.findAll({
+      order: sort
+        ? [[sort, "ASC"]]
+        : []
+    });
+
+    res.status(200).json(stores);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
 
 const searchStores = async (req, res) => {
   try {
@@ -70,27 +89,10 @@ const searchStores = async (req, res) => {
     });
   }
 };
-const getAllStores = async (req, res) => {
-  try {
 
-    const sort = req.query.sort;
-
-    const stores = await Store.findAll({
-      order: sort
-        ? [[sort, "ASC"]]
-        : []
-    });
-
-    res.status(200).json(stores);
-
-  } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
-  }
-};
 
 module.exports = {
   searchStores,
-  getAllStores
+  getAllStores,
+  searchStores
 };

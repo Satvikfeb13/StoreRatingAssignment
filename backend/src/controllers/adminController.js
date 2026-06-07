@@ -5,8 +5,13 @@ const { Op } = require("sequelize");
 const getAllUsers = async (req, res) => {
   try {
 
-    const { name, email, role, sort } = req.query;
-
+const {
+  name,
+  email,
+  role,
+  address,
+  sort
+} = req.query;
     const where = {};
 
     if (name) {
@@ -24,6 +29,11 @@ const getAllUsers = async (req, res) => {
     if (role) {
       where.role = role;
     }
+    if (address) {
+  where.address = {
+    [Op.like]: `%${address}%`
+  };
+}
 
     const users = await User.findAll({
       where,
