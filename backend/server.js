@@ -1,14 +1,16 @@
 require("dotenv").config();
 
-const express = require("express");
-const app = express();
-
-app.get("/", (req, res) => {
-    res.send("Store Rating API is running...");
-});
+const app = require("./app");
+const { sequelize } = require("./src/config/db");
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+sequelize.sync()
+  .then(() => {
+    console.log("Database Connected");
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch(console.error);
