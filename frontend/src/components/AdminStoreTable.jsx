@@ -3,12 +3,13 @@ import { useState } from 'react';
 
 const { Search } = Input;
 
-const StoreTable = ({ stores, loading, onRateStore }) => {
+const AdminStoreTable = ({ stores, loading }) => {
   const [searchText, setSearchText] = useState('');
 
   const filteredStores = stores.filter((store) =>
     store.storeName?.toLowerCase().includes(searchText.toLowerCase()) ||
-    store.address?.toLowerCase().includes(searchText.toLowerCase())
+    store.address?.toLowerCase().includes(searchText.toLowerCase()) ||
+    store.email?.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const columns = [
@@ -16,32 +17,19 @@ const StoreTable = ({ stores, loading, onRateStore }) => {
       title: 'Store Name',
       dataIndex: 'storeName',
       key: 'storeName',
+      sorter: (a, b) => a.storeName.localeCompare(b.storeName),
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
       title: 'Address',
       dataIndex: 'address',
       key: 'address',
-    },
-    {
-      title: 'Overall Rating',
-      dataIndex: 'overallRating',
-      key: 'overallRating',
-      render: (rating) => (rating ? Number(rating).toFixed(1) : 'No ratings yet'),
-    },
-    {
-      title: 'Your Rating',
-      dataIndex: 'userSubmittedRating',
-      key: 'userSubmittedRating',
-      render: (rating) => rating || 'Not rated',
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <a onClick={() => onRateStore(record)}>
-          {record.userSubmittedRating ? 'Update Rating' : 'Rate Store'}
-        </a>
-      ),
+      sorter: (a, b) => a.address.localeCompare(b.address),
     },
   ];
 
@@ -49,7 +37,7 @@ const StoreTable = ({ stores, loading, onRateStore }) => {
     <div>
       <div style={{ marginBottom: 16 }}>
         <Search
-          placeholder="Search stores by name or address"
+          placeholder="Search stores by name, email or address"
           allowClear
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
@@ -65,4 +53,4 @@ const StoreTable = ({ stores, loading, onRateStore }) => {
   );
 };
 
-export default StoreTable;
+export default AdminStoreTable;
