@@ -86,8 +86,44 @@ const login = async (req, res) => {
     });
   }
 };
+const changePassword = async (req, res) => {
+  try {
+
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await User.findByPk(req.user.id);
+
+    const isMatch = await bcrypt.compare(
+      oldPassword,
+      user.password
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Old password incorrect"
+      });
+    }
+
+    user.password = await bcrypt.hash(
+      newPassword,
+      10
+    );
+
+    await user.save();
+
+    res.json({
+      message: "Password changed successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
 
 module.exports = {
   signup,
-  login
-};
+  login,
+  changePassword
+}

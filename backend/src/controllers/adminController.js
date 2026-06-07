@@ -1,9 +1,33 @@
 const { User, Store, Rating } = require("../models");
 const bcrypt = require("bcrypt");
+const { Op } = require("sequelize");
+
 const getAllUsers = async (req, res) => {
   try {
 
+    const { name, email, role, sort } = req.query;
+
+    const where = {};
+
+    if (name) {
+      where.name = {
+        [Op.like]: `%${name}%`
+      };
+    }
+
+    if (email) {
+      where.email = {
+        [Op.like]: `%${email}%`
+      };
+    }
+
+    if (role) {
+      where.role = role;
+    }
+
     const users = await User.findAll({
+      where,
+      order: sort ? [[sort, "ASC"]] : [],
       attributes: {
         exclude: ["password"]
       }
@@ -11,13 +35,14 @@ const getAllUsers = async (req, res) => {
 
     res.status(200).json(users);
 
-  } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
-  }
-};
+  }catch (error) {
+  console.log(error);
 
+  res.status(500).json({
+    message: error.message
+  });
+}
+}
 const getDashboard = async (req, res) => {
   try {
     const totalUsers = await User.count();
@@ -67,7 +92,33 @@ const addUser = async (req, res) => {
     });
   }
 };
+const getUserById = async (req, res) => {
 
+  try {
+
+    const user = await User.findByPk(
+      req.params.id,
+      {
+        attributes: {
+          exclude: ["password"]
+        }
+      }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    res.json(user);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
 const addStore = async (req, res) => {
   try {
 
@@ -112,6 +163,7 @@ module.exports = {
   addStore,
   getAllUsers,
   getAllStores,
+  getUserById
   
   
 

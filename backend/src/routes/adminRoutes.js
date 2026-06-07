@@ -8,7 +8,8 @@ const {
   addUser,
   addStore,
   getAllUsers,
-  getAllStores
+  getAllStores,
+  getUserById
   
 } = require("../controllers/adminController");
 router.get(
@@ -34,6 +35,12 @@ router.post(
   authenticate,
   authorize("ADMIN"),
   addUser
+);
+router.get(
+  "/users/:id",
+  authenticate,
+  authorize("ADMIN"),
+  getUserById
 );
 router.post(
   "/stores",
